@@ -114,7 +114,7 @@ function checkWinner() {
 }
 
 function minimax(gameState, depth, isMaximizing) {
-  const winner = checkWinnerForMinimax();
+  const winner = checkWinner();
   if (winner === "X") return 10 - depth; // Компьютер выигрывает
   if (winner === "O") return depth - 10; // Игрок выигрывает
   if (!gameState.includes(null)) return 0; // Ничья
