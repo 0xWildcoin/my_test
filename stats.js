@@ -2,6 +2,17 @@
 
 const statsDisplay = document.getElementById("stats");
 
+if (!statsDisplay) {
+  console.error("Элемент с ID 'stats' не найден в DOM.");
+} else {
+  statsDisplay.innerHTML = `
+    <p>Всего игр: ${gameStats.totalGames}</p>
+    <p>Победы игрока: ${gameStats.playerWins}</p>
+    <p>Победы компьютера: ${gameStats.computerWins}</p>
+    <p>Ничьи: ${gameStats.draws}</p>
+  `;
+}
+
 // Инициализация статистики
 const gameStats = JSON.parse(localStorage.getItem("gameStats")) || {
   totalGames: 0,
