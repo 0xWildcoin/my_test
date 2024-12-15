@@ -13,9 +13,12 @@ let userScore = 0;
 const tg = window.Telegram.WebApp;
 
 // Получаем информацию о пользователе
-const user = tg.initDataUnsafe?.user || null;
+const user = window.Telegram.WebApp.initDataUnsafe?.user || null;
+
 if (user) {
   usernameDisplay.textContent = `Привет, ${user.first_name || user.username || "Игрок"}!`;
+} else {
+  console.error("Ошибка получения данных пользователя. Telegram SDK не инициализирован.");
 }
 
 // Проверяем, есть ли сохранённые очки для пользователя
