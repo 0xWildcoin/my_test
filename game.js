@@ -38,12 +38,14 @@ function handleCellClick(event) {
   if (checkWinner()) {
     handleGameEnd("O");
     status.textContent = `Победил игрок O!`;
+    gameActive = false; // Останавливаем игру
     return;
   }
 
   if (!gameState.includes(null)) {
     handleGameEnd("draw");
     status.textContent = "Ничья!";
+    gameActive = false; // Останавливаем игру
     return;
   }
 
