@@ -103,7 +103,7 @@ function makeMove(index, player) {
 }
 
 // Проверка на победу
-function checkWinnerForMinimax() {
+function checkWinner() {
   for (let combination of winningCombinations) {
     const [a, b, c] = combination;
     if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
