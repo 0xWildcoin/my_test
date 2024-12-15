@@ -77,3 +77,12 @@ h1 {
   color: #333;
   font-weight: bold;
 }
+.stats {
+  margin-top: 20px;
+  text-align: left;
+  font-size: 1em;
+  color: #333;
+}
+.stats p {
+  margin: 5px 0;
+}
