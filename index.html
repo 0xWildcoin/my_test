@@ -1,17 +1,20 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Web App</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Крестики-нолики</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>����� ����������!</h1>
-    <p id="greeting"></p>
-    <button id="send">��������� ������</button>
-
-    <script src="script.js"></script>
+  <div class="container">
+    <h1>Крестики-нолики</h1>
+    <div class="board" id="board">
+      <!-- Клетки поля будут добавлены динамически -->
+    </div>
+    <div class="status" id="status">Ход: X</div>
+    <button class="reset-button" id="reset">Сбросить</button>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
