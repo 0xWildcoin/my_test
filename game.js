@@ -1,66 +1,18 @@
+// game.js
+
 const board = document.getElementById("board");
 const status = document.getElementById("status");
 const resetButton = document.getElementById("reset");
-const scoreDisplay = document.getElementById("score");
-const usernameDisplay = document.getElementById("username");
-
-let tg = null; // Объявляем глобально
 let currentPlayer = "O"; // Игрок всегда "O"
 let gameActive = true;
 let gameState = Array(9).fill(null);
-let userScore = 0;
 
+// Выигрышные комбинации
 const winningCombinations = [
-  [0, 1, 2], // Первая строка
-  [3, 4, 5], // Вторая строка
-  [6, 7, 8], // Третья строка
-  [0, 3, 6], // Первый столбец
-  [1, 4, 7], // Второй столбец
-  [2, 5, 8], // Третий столбец
-  [0, 4, 8], // Диагональ сверху вниз
-  [2, 4, 6]  // Диагональ снизу вверх
+  [0, 1, 2], [3, 4, 5], [6, 7, 8], // Горизонтальные
+  [0, 3, 6], [1, 4, 7], [2, 5, 8], // Вертикальные
+  [0, 4, 8], [2, 4, 6]             // Диагонали
 ];
-
-// Проверка на наличие Telegram WebApp SDK
-if (window.Telegram && window.Telegram.WebApp) {
-  tg = window.Telegram.WebApp;
-
-  console.log("WebApp инициализирован:", tg);
-  console.log("initData:", tg.initData);
-  console.log("initDataUnsafe:", tg.initDataUnsafe);
-
-  // Проверка данных пользователя
-  const user = tg.initDataUnsafe?.user;
-  if (user) {
-    console.log("Пользователь:", user);
-    usernameDisplay.textContent = `Привет, ${user.first_name || "Игрок"}!`;
-  } else {
-    console.warn("Данные пользователя не получены.");
-  }
-
-  tg.expand();
-} else {
-  console.error("Telegram WebApp SDK не загружен. Запустите приложение через Telegram.");
-  alert("Пожалуйста, откройте это приложение через Telegram бот.");
-  usernameDisplay.textContent = "Привет, Игрок!";
-}
-
-// Проверяем, есть ли сохранённые очки для пользователя
-const user = tg?.initDataUnsafe?.user || { id: "guest", first_name: "Игрок" };
-const userId = user?.id || "guest";
-const savedScores = JSON.parse(localStorage.getItem("scores")) || {};
-userScore = savedScores[userId] || 0;
-
-// Обновляем отображение очков
-function updateScoreDisplay() {
-  scoreDisplay.textContent = `Ваши очки: ${userScore}`;
-}
-
-// Сохраняем очки
-function saveScore() {
-  savedScores[userId] = userScore;
-  localStorage.setItem("scores", JSON.stringify(savedScores));
-}
 
 // Создаём игровое поле
 function createBoard() {
@@ -82,24 +34,21 @@ function handleCellClick(event) {
   makeMove(index, currentPlayer); // Игрок делает ход
 
   if (checkWinner()) {
-    userScore++;
-    saveScore(); // Сохраняем очки
-    updateScoreDisplay();
-    status.textContent = `Победил игрок ${currentPlayer}! (+1 очко)`;
-    gameActive = false;
+    handleGameEnd("O");
+    status.textContent = `Победил игрок O!`;
     return;
   }
 
   if (!gameState.includes(null)) {
+    handleGameEnd("draw");
     status.textContent = "Ничья!";
-    gameActive = false;
     return;
   }
 
   // Ход компьютера
   currentPlayer = "X";
   status.textContent = `Ход: Компьютер (X)`;
-  setTimeout(computerMove, 500); // Даем небольшую паузу перед ходом компьютера
+  setTimeout(computerMove, 500); // Пауза перед ходом компьютера
 }
 
 // Ход компьютера
@@ -115,14 +64,14 @@ function computerMove() {
   makeMove(randomIndex, "X");
 
   if (checkWinner()) {
-    status.textContent = `Победил игрок X (компьютер)!`;
-    gameActive = false;
+    handleGameEnd("X");
+    status.textContent = `Победил компьютер (X)!`;
     return;
   }
 
   if (!gameState.includes(null)) {
+    handleGameEnd("draw");
     status.textContent = "Ничья!";
-    gameActive = false;
     return;
   }
 
@@ -156,7 +105,3 @@ function resetGame() {
 
 board.addEventListener("click", handleCellClick);
 resetButton.addEventListener("click", resetGame);
-
-// Инициализация
-updateScoreDisplay();
-createBoard();
