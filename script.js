@@ -1,10 +1,17 @@
 const board = document.getElementById("board");
 const status = document.getElementById("status");
 const resetButton = document.getElementById("reset");
+const scoreDisplay = document.getElementById("score");
 
 let currentPlayer = "O"; // Игрок всегда "O"
 let gameActive = true;
 let gameState = Array(9).fill(null);
+let userScore = 0;
+
+// Проверяем, есть ли сохранённые очки
+if (localStorage.getItem("userScore")) {
+  userScore = parseInt(localStorage.getItem("userScore"), 10);
+}
 
 const winningCombinations = [
   [0, 1, 2],
@@ -16,6 +23,11 @@ const winningCombinations = [
   [0, 4, 8],
   [2, 4, 6]
 ];
+
+// Обновляем отображение очков
+function updateScoreDisplay() {
+  scoreDisplay.textContent = `Ваши очки: ${userScore}`;
+}
 
 // Создаём игровое поле
 function createBoard() {
@@ -37,7 +49,10 @@ function handleCellClick(event) {
   makeMove(index, currentPlayer); // Игрок делает ход
 
   if (checkWinner()) {
-    status.textContent = `Победил игрок ${currentPlayer}!`;
+    userScore++;
+    localStorage.setItem("userScore", userScore); // Сохраняем очки
+    updateScoreDisplay();
+    status.textContent = `Победил игрок ${currentPlayer}! (+1 очко)`;
     gameActive = false;
     return;
   }
@@ -110,4 +125,5 @@ board.addEventListener("click", handleCellClick);
 resetButton.addEventListener("click", resetGame);
 
 // Инициализация
+updateScoreDisplay();
 createBoard();
