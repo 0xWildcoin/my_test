@@ -9,14 +9,12 @@ let gameState = Array(9).fill(null);
 let userScore = 0;
 
 // Telegram WebApp SDK
-const tg = window.Telegram.WebApp;
-
-let tg = null;
+let tg = null; // Объявляем tg один раз
 
 // Проверка на наличие Telegram WebApp SDK
 if (window.Telegram && window.Telegram.WebApp) {
   tg = window.Telegram.WebApp;
-  tg.expand(); // Расширить интерфейс Telegram WebApp
+  tg.expand(); // Расширяем интерфейс
 } else {
   console.error("Telegram WebApp SDK не загружен.");
 }
