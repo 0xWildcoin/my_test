@@ -59,29 +59,28 @@ function handleCellClick(event) {
 function computerMove() {
   if (!gameActive) return;
 
-  // Выбираем случайную свободную клетку
-  const freeCells = gameState
-    .map((value, index) => (value === null ? index : null))
-    .filter(index => index !== null);
-
-  const randomIndex = freeCells[Math.floor(Math.random() * freeCells.length)];
-  makeMove(randomIndex, "X");
+  // Выбираем лучший ход для компьютера
+  const bestMove = getBestMove();
+  makeMove(bestMove, "X");
 
   if (checkWinner()) {
     handleGameEnd("X");
     status.textContent = `Победил компьютер (X)!`;
+    gameActive = false;
     return;
   }
 
   if (!gameState.includes(null)) {
     handleGameEnd("draw");
     status.textContent = "Ничья!";
+    gameActive = false;
     return;
   }
 
   currentPlayer = "O";
   status.textContent = `Ход: Игрок (O)`;
 }
+
 
 // Логика хода
 function makeMove(index, player) {
@@ -96,6 +95,52 @@ function checkWinner() {
   return winningCombinations.some(combination =>
     combination.every(index => gameState[index] === currentPlayer)
   );
+}
+
+function getBestMove() {
+  // 1. Если компьютер может выиграть, выбираем этот ход
+  for (let i = 0; i < gameState.length; i++) {
+    if (gameState[i] === null) {
+      gameState[i] = "X";
+      if (checkWinner()) {
+        gameState[i] = null; // Отменяем временный ход
+        return i;
+      }
+      gameState[i] = null; // Отменяем временный ход
+    }
+  }
+
+  // 2. Если игрок может выиграть, блокируем его
+  for (let i = 0; i < gameState.length; i++) {
+    if (gameState[i] === null) {
+      gameState[i] = "O";
+      if (checkWinner()) {
+        gameState[i] = null; // Отменяем временный ход
+        return i;
+      }
+      gameState[i] = null; // Отменяем временный ход
+    }
+  }
+
+  // 3. Если центр свободен, занимаем его
+  if (gameState[4] === null) {
+    return 4;
+  }
+
+  // 4. Если центр занят, выбираем любой угол
+  const corners = [0, 2, 6, 8];
+  for (let corner of corners) {
+    if (gameState[corner] === null) {
+      return corner;
+    }
+  }
+
+  // 5. Если углы заняты, выбираем любое свободное место
+  for (let i = 0; i < gameState.length; i++) {
+    if (gameState[i] === null) {
+      return i;
+    }
+  }
 }
 
 // Сброс игры
