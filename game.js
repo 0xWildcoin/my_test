@@ -1,5 +1,4 @@
 // game.js
-createBoard();
 
 const board = document.getElementById("board");
 const status = document.getElementById("status");
@@ -25,6 +24,8 @@ function createBoard() {
     board.appendChild(cellElement);
   });
 }
+
+createBoard();
 
 // Обработка клика игрока
 function handleCellClick(event) {
