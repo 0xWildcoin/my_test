@@ -1,3 +1,16 @@
+const usernameDisplay = document.getElementById("username");
+
+// Проверяем, есть ли SDK и данные пользователя
+if (window.Telegram && window.Telegram.WebApp) {
+  const tg = window.Telegram.WebApp;
+  const user = tg.initDataUnsafe?.user || { first_name: "Игрок" };
+  usernameDisplay.textContent = `Привет, ${user.first_name}!`;
+  tg.expand(); // Расширяем WebApp
+} else {
+  console.error("Telegram WebApp SDK не загружен.");
+  usernameDisplay.textContent = "Привет, Игрок!";
+}
+
 // Инициализация статистики
 const gameStats = JSON.parse(localStorage.getItem("gameStats")) || {
   totalGames: 0,
