@@ -1,4 +1,5 @@
 // game.js
+createBoard();
 
 const board = document.getElementById("board");
 const status = document.getElementById("status");
