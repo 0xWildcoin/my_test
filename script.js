@@ -10,6 +10,17 @@ let gameActive = true;
 let gameState = Array(9).fill(null);
 let userScore = 0;
 
+const winningCombinations = [
+  [0, 1, 2], // Первая строка
+  [3, 4, 5], // Вторая строка
+  [6, 7, 8], // Третья строка
+  [0, 3, 6], // Первый столбец
+  [1, 4, 7], // Второй столбец
+  [2, 5, 8], // Третий столбец
+  [0, 4, 8], // Диагональ сверху вниз
+  [2, 4, 6]  // Диагональ снизу вверх
+];
+
 // Проверка на наличие Telegram WebApp SDK
 if (window.Telegram && window.Telegram.WebApp) {
   tg = window.Telegram.WebApp;
