@@ -2,31 +2,36 @@ const board = document.getElementById("board");
 const status = document.getElementById("status");
 const resetButton = document.getElementById("reset");
 const scoreDisplay = document.getElementById("score");
+const usernameDisplay = document.getElementById("username");
 
 let currentPlayer = "O"; // Игрок всегда "O"
 let gameActive = true;
 let gameState = Array(9).fill(null);
 let userScore = 0;
 
-// Проверяем, есть ли сохранённые очки
-if (localStorage.getItem("userScore")) {
-  userScore = parseInt(localStorage.getItem("userScore"), 10);
+// Telegram WebApp SDK
+const tg = window.Telegram.WebApp;
+
+// Получаем информацию о пользователе
+const user = tg.initDataUnsafe?.user || null;
+if (user) {
+  usernameDisplay.textContent = `Привет, ${user.first_name || user.username || "Игрок"}!`;
 }
 
-const winningCombinations = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6]
-];
+// Проверяем, есть ли сохранённые очки для пользователя
+const userId = user?.id || "guest";
+const savedScores = JSON.parse(localStorage.getItem("scores")) || {};
+userScore = savedScores[userId] || 0;
 
 // Обновляем отображение очков
 function updateScoreDisplay() {
   scoreDisplay.textContent = `Ваши очки: ${userScore}`;
+}
+
+// Сохраняем очки
+function saveScore() {
+  savedScores[userId] = userScore;
+  localStorage.setItem("scores", JSON.stringify(savedScores));
 }
 
 // Создаём игровое поле
@@ -50,7 +55,7 @@ function handleCellClick(event) {
 
   if (checkWinner()) {
     userScore++;
-    localStorage.setItem("userScore", userScore); // Сохраняем очки
+    saveScore(); // Сохраняем очки
     updateScoreDisplay();
     status.textContent = `Победил игрок ${currentPlayer}! (+1 очко)`;
     gameActive = false;
@@ -127,3 +132,6 @@ resetButton.addEventListener("click", resetGame);
 // Инициализация
 updateScoreDisplay();
 createBoard();
+
+// Расширяем Web App интерфейс
+tg.expand();
