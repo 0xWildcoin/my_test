@@ -9,15 +9,21 @@ let gameState = Array(9).fill(null);
 let userScore = 0;
 
 // Telegram WebApp SDK
-let tg = null; // Объявляем tg один раз
+let tg = null;
 
 // Проверка на наличие Telegram WebApp SDK
 if (window.Telegram && window.Telegram.WebApp) {
   tg = window.Telegram.WebApp;
-  tg.expand(); // Расширяем интерфейс
+  tg.expand(); // Расширяем интерфейс Telegram
 } else {
-  console.error("Telegram WebApp SDK не загружен.");
+  console.warn("Telegram WebApp SDK не загружен. Запустите игру через Telegram Web App.");
 }
+
+// Заглушка для безопасного вызова функций
+if (!tg) {
+  console.log("Запущено в браузере. SDK недоступен.");
+}
+
 
 const usernameDisplay = document.getElementById("username");
 
