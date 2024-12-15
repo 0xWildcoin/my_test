@@ -2,7 +2,7 @@ const board = document.getElementById("board");
 const status = document.getElementById("status");
 const resetButton = document.getElementById("reset");
 
-let currentPlayer = "X";
+let currentPlayer = "O"; // Игрок всегда "O"
 let gameActive = true;
 let gameState = Array(9).fill(null);
 
@@ -17,6 +17,7 @@ const winningCombinations = [
   [2, 4, 6]
 ];
 
+// Создаём игровое поле
 function createBoard() {
   board.innerHTML = "";
   gameState.forEach((cell, index) => {
@@ -27,14 +28,13 @@ function createBoard() {
   });
 }
 
+// Обработка клика игрока
 function handleCellClick(event) {
   const index = event.target.dataset.index;
 
-  if (!gameActive || gameState[index]) return;
+  if (!gameActive || gameState[index] || currentPlayer !== "O") return;
 
-  gameState[index] = currentPlayer;
-  event.target.textContent = currentPlayer;
-  event.target.classList.add("taken");
+  makeMove(index, currentPlayer); // Игрок делает ход
 
   if (checkWinner()) {
     status.textContent = `Победил игрок ${currentPlayer}!`;
@@ -48,21 +48,61 @@ function handleCellClick(event) {
     return;
   }
 
-  currentPlayer = currentPlayer === "X" ? "O" : "X";
-  status.textContent = `Ход: ${currentPlayer}`;
+  // Ход компьютера
+  currentPlayer = "X";
+  status.textContent = `Ход: Компьютер (X)`;
+  setTimeout(computerMove, 500); // Даем небольшую паузу перед ходом компьютера
 }
 
+// Ход компьютера
+function computerMove() {
+  if (!gameActive) return;
+
+  // Выбираем случайную свободную клетку
+  const freeCells = gameState
+    .map((value, index) => (value === null ? index : null))
+    .filter(index => index !== null);
+
+  const randomIndex = freeCells[Math.floor(Math.random() * freeCells.length)];
+  makeMove(randomIndex, "X");
+
+  if (checkWinner()) {
+    status.textContent = `Победил игрок X (компьютер)!`;
+    gameActive = false;
+    return;
+  }
+
+  if (!gameState.includes(null)) {
+    status.textContent = "Ничья!";
+    gameActive = false;
+    return;
+  }
+
+  currentPlayer = "O";
+  status.textContent = `Ход: Игрок (O)`;
+}
+
+// Логика хода
+function makeMove(index, player) {
+  gameState[index] = player;
+  const cell = board.querySelector(`[data-index='${index}']`);
+  cell.textContent = player;
+  cell.classList.add("taken");
+}
+
+// Проверка на победу
 function checkWinner() {
   return winningCombinations.some(combination =>
     combination.every(index => gameState[index] === currentPlayer)
   );
 }
 
+// Сброс игры
 function resetGame() {
-  currentPlayer = "X";
+  currentPlayer = "O";
   gameActive = true;
   gameState.fill(null);
-  status.textContent = `Ход: ${currentPlayer}`;
+  status.textContent = `Ход: Игрок (O)`;
   createBoard();
 }
 
