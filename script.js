@@ -2,7 +2,6 @@ const board = document.getElementById("board");
 const status = document.getElementById("status");
 const resetButton = document.getElementById("reset");
 const scoreDisplay = document.getElementById("score");
-const usernameDisplay = document.getElementById("username");
 
 let currentPlayer = "O"; // Игрок всегда "O"
 let gameActive = true;
@@ -12,14 +11,22 @@ let userScore = 0;
 // Telegram WebApp SDK
 const tg = window.Telegram.WebApp;
 
-// Получаем информацию о пользователе
-const user = window.Telegram.WebApp.initDataUnsafe?.user || null;
+let tg = null;
 
-if (user) {
-  usernameDisplay.textContent = `Привет, ${user.first_name || user.username || "Игрок"}!`;
+// Проверка на наличие Telegram WebApp SDK
+if (window.Telegram && window.Telegram.WebApp) {
+  tg = window.Telegram.WebApp;
+  tg.expand(); // Расширить интерфейс Telegram WebApp
 } else {
-  console.error("Ошибка получения данных пользователя. Telegram SDK не инициализирован.");
+  console.error("Telegram WebApp SDK не загружен.");
 }
+
+const usernameDisplay = document.getElementById("username");
+
+// Получаем информацию о пользователе
+const user = tg?.initDataUnsafe?.user || { first_name: "Игрок" };
+usernameDisplay.textContent = `Привет, ${user.first_name || "Игрок"}!`;
+
 
 // Проверяем, есть ли сохранённые очки для пользователя
 const userId = user?.id || "guest";
