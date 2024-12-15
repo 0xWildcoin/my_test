@@ -59,8 +59,21 @@ function handleCellClick(event) {
 function computerMove() {
   if (!gameActive) return;
 
-  // Выбираем лучший ход для компьютера
-  const bestMove = getBestMove();
+  let bestScore = -Infinity;
+  let bestMove = null;
+
+  for (let i = 0; i < gameState.length; i++) {
+    if (gameState[i] === null) {
+      gameState[i] = "X"; // Компьютер делает ход
+      const score = minimax(gameState, 0, false); // Оцениваем ход
+      gameState[i] = null; // Отменяем ход
+      if (score > bestScore) {
+        bestScore = score;
+        bestMove = i;
+      }
+    }
+  }
+
   makeMove(bestMove, "X");
 
   if (checkWinner()) {
@@ -81,7 +94,6 @@ function computerMove() {
   status.textContent = `Ход: Игрок (O)`;
 }
 
-
 // Логика хода
 function makeMove(index, player) {
   gameState[index] = player;
@@ -91,55 +103,44 @@ function makeMove(index, player) {
 }
 
 // Проверка на победу
-function checkWinner() {
-  return winningCombinations.some(combination =>
-    combination.every(index => gameState[index] === currentPlayer)
-  );
+function checkWinnerForMinimax() {
+  for (let combination of winningCombinations) {
+    const [a, b, c] = combination;
+    if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
+      return gameState[a]; // Возвращает "X" или "O"
+    }
+  }
+  return null; // Никто не победил
 }
 
-function getBestMove() {
-  // 1. Если компьютер может выиграть, выбираем этот ход
-  for (let i = 0; i < gameState.length; i++) {
-    if (gameState[i] === null) {
-      gameState[i] = "X";
-      if (checkWinner()) {
-        gameState[i] = null; // Отменяем временный ход
-        return i;
+function minimax(gameState, depth, isMaximizing) {
+  const winner = checkWinnerForMinimax();
+  if (winner === "X") return 10 - depth; // Компьютер выигрывает
+  if (winner === "O") return depth - 10; // Игрок выигрывает
+  if (!gameState.includes(null)) return 0; // Ничья
+
+  if (isMaximizing) {
+    let maxEval = -Infinity;
+    for (let i = 0; i < gameState.length; i++) {
+      if (gameState[i] === null) {
+        gameState[i] = "X"; // Компьютер делает ход
+        const evaluation = minimax(gameState, depth + 1, false);
+        gameState[i] = null; // Отменяем ход
+        maxEval = Math.max(maxEval, evaluation);
       }
-      gameState[i] = null; // Отменяем временный ход
     }
-  }
-
-  // 2. Если игрок может выиграть, блокируем его
-  for (let i = 0; i < gameState.length; i++) {
-    if (gameState[i] === null) {
-      gameState[i] = "O";
-      if (checkWinner()) {
-        gameState[i] = null; // Отменяем временный ход
-        return i;
+    return maxEval;
+  } else {
+    let minEval = Infinity;
+    for (let i = 0; i < gameState.length; i++) {
+      if (gameState[i] === null) {
+        gameState[i] = "O"; // Игрок делает ход
+        const evaluation = minimax(gameState, depth + 1, true);
+        gameState[i] = null; // Отменяем ход
+        minEval = Math.min(minEval, evaluation);
       }
-      gameState[i] = null; // Отменяем временный ход
     }
-  }
-
-  // 3. Если центр свободен, занимаем его
-  if (gameState[4] === null) {
-    return 4;
-  }
-
-  // 4. Если центр занят, выбираем любой угол
-  const corners = [0, 2, 6, 8];
-  for (let corner of corners) {
-    if (gameState[corner] === null) {
-      return corner;
-    }
-  }
-
-  // 5. Если углы заняты, выбираем любое свободное место
-  for (let i = 0; i < gameState.length; i++) {
-    if (gameState[i] === null) {
-      return i;
-    }
+    return minEval;
   }
 }
 
