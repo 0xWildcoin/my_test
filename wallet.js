@@ -1,8 +1,6 @@
 const connectWalletButton = document.getElementById("connectWallet");
 const walletAddressDisplay = document.getElementById("walletAddress");
 
-console.log("Полный initDataUnsafe:", tg.initDataUnsafe);
-
 if (window.Telegram && window.Telegram.WebApp) {
   const tg = window.Telegram.WebApp;
 
