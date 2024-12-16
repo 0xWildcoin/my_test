@@ -25,3 +25,25 @@ connectWalletButton.addEventListener("click", async () => {
     console.error("Ошибка подключения кошелька:", error);
   }
 });
+
+import { TonClient } from "ton";
+
+// Функция для проверки баланса
+async function checkWalletBalance(walletAddress) {
+  const client = new TonClient({
+    endpoint: "https://toncenter.com/api/v2/jsonRPC"
+  });
+
+  try {
+    const balance = await client.getBalance(walletAddress);
+    console.log(`Баланс кошелька: ${(balance / 1e9).toFixed(2)} TON`);
+    alert(`Баланс кошелька: ${(balance / 1e9).toFixed(2)} TON`);
+  } catch (error) {
+    console.error("Ошибка получения баланса:", error);
+  }
+}
+
+// Пример вызова функции
+const walletAddress = "Ваш адрес кошелька";
+checkWalletBalance(walletAddress);
+
