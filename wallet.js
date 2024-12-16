@@ -1,28 +1,31 @@
-// Подключение TON Connect SDK
-const tonConnect = new TonConnect();
+// Убедитесь, что библиотека доступна
+if (typeof TonConnect === "undefined") {
+  console.error("TON Connect SDK не загружен.");
+} else {
+  // Инициализация TON Connect
+  const tonConnect = new TonConnect();
 
-// DOM элементы
-const connectWalletButton = document.getElementById("connectWallet");
-const walletAddressDisplay = document.getElementById("walletAddress");
+  // DOM элементы
+  const connectWalletButton = document.getElementById("connectWallet");
+  const walletAddressDisplay = document.getElementById("walletAddress");
 
-// Обработчик кнопки подключения
-connectWalletButton.addEventListener("click", async () => {
-  try {
-    // Подключаем кошелёк
-    await tonConnect.connectWallet();
+  // Подключение кошелька
+  connectWalletButton.addEventListener("click", async () => {
+    try {
+      // Открываем окно подключения
+      await tonConnect.connectWallet();
 
-    // Получаем адрес кошелька
-    const wallet = tonConnect.wallet;
-    if (wallet) {
-      const walletAddress = wallet.account.address;
-      walletAddressDisplay.textContent = `Кошелёк: ${walletAddress}`;
-      console.log("Кошелёк подключён:", walletAddress);
-    } else {
-      walletAddressDisplay.textContent = "Кошелёк не подключён";
-      console.warn("Кошелёк не подключён.");
+      // Получаем данные о подключённом кошельке
+      const wallet = tonConnect.wallet;
+      if (wallet) {
+        const walletAddress = wallet.account.address;
+        walletAddressDisplay.textContent = `Кошелёк: ${walletAddress}`;
+        console.log("Кошелёк подключён:", walletAddress);
+      } else {
+        console.warn("Кошелёк не подключён.");
+      }
+    } catch (error) {
+      console.error("Ошибка подключения кошелька:", error);
     }
-  } catch (error) {
-    console.error("Ошибка подключения кошелька:", error);
-    alert("Не удалось подключить кошелёк. Попробуйте снова.");
-  }
-});
+  });
+}
