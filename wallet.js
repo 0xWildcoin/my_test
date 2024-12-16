@@ -1,6 +1,23 @@
 const connectWalletButton = document.getElementById("connectWallet");
 const walletAddressDisplay = document.getElementById("walletAddress");
 
+console.log("Полный initDataUnsafe:", tg.initDataUnsafe);
+
+if (window.Telegram && window.Telegram.WebApp) {
+  const tg = window.Telegram.WebApp;
+
+  console.log("initDataUnsafe:", tg.initDataUnsafe);
+
+  if (tg.initDataUnsafe?.wallet) {
+    console.log("Кошелёк Telegram доступен:", tg.initDataUnsafe.wallet);
+  } else {
+    console.warn("Кошелёк Telegram недоступен.");
+  }
+} else {
+  console.error("Telegram WebApp SDK не загружен.");
+}
+
+
 // Проверяем наличие Telegram WebApp
 if (window.Telegram && window.Telegram.WebApp) {
   const tg = window.Telegram.WebApp;
