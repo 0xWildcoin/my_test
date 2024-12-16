@@ -11,8 +11,6 @@ if (window.Telegram && window.Telegram.WebApp) {
   usernameDisplay.textContent = "Привет, Игрок!";
 }
 
-console.log("Полный initDataUnsafe:", tg.initDataUnsafe);
-
 // Инициализация статистики
 const gameStats = JSON.parse(localStorage.getItem("gameStats")) || {
   totalGames: 0,
